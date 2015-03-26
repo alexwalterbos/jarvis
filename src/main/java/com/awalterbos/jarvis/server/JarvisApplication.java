@@ -8,10 +8,15 @@ import lombok.SneakyThrows;
 
 public class JarvisApplication extends Application<JarvisConfiguration> {
 
-	private static final String NAME = "Jarvis";
+	public static final String NAME = "Jarvis";
 
 	@SneakyThrows
 	public static void main(String[] args) {
+		if (args.length == 0) {
+			args = new String[2];
+			args[0] = "server";
+			args[1] = "config.yml";
+		}
 		new JarvisApplication().run(args);
 	}
 

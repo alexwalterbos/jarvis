@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet id="add_groups_table" author="awalterbos">
+		<createTable tableName="groups">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints primaryKey="true"/>
+			</column>
+		</createTable>
+		<createTable tableName="sayings">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true"/>
+			</column>
+			<column name="format" type="varchar(255)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="default_text" type="varchar(255)" defaultValue="Default"/>
+		</createTable>
+	</changeSet>
+
+</databaseChangeLog>

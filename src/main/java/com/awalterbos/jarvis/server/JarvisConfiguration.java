@@ -13,6 +13,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class JarvisConfiguration extends Configuration {
+
 	@Valid
 	@NotNull
 	@JsonProperty("database")
