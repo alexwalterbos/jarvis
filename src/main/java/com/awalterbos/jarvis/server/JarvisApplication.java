@@ -10,19 +10,8 @@ public class JarvisApplication extends Application<JarvisConfiguration> {
 
 	public static final String NAME = "Jarvis";
 
-	@SneakyThrows
-	public static void main(String[] args) {
-		if (args.length == 0) {
-			args = new String[2];
-			args[0] = "server";
-			args[1] = "config.yml";
-		}
+	public static void main(String[] args) throws Exception {
 		new JarvisApplication().run(args);
-	}
-
-	@Override
-	public String getName() {
-		return NAME;
 	}
 
 	@Override
@@ -34,6 +23,11 @@ public class JarvisApplication extends Application<JarvisConfiguration> {
 				.build();
 
 		bootstrap.addBundle(guiceBundle);
+	}
+
+	@Override
+	public String getName() {
+		return NAME;
 	}
 
 	@Override

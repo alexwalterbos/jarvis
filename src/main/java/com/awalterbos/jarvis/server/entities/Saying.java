@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -25,16 +24,13 @@ public class Saying {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	@Setter(AccessLevel.NONE)
-	@JsonProperty
 	private Long id;
 
 	@Column(name = "format")
 	@NotNull
-	@JsonProperty(required = true)
 	private String format;
 
 	@Column(name = "default_text")
-	@JsonProperty
 	private String defaultText;
 
 	public String formatDefault() {

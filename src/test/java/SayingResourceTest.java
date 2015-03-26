@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import javax.ws.rs.client.Entity;
+
 import com.awalterbos.jarvis.server.SayingDAO;
 import com.awalterbos.jarvis.server.entities.Saying;
 import com.awalterbos.jarvis.server.resources.SayingResource;
@@ -27,6 +29,7 @@ public class SayingResourceTest {
 	@Before
 	public void setup() {
 		when(DAO.findById(eq(1l))).thenReturn(saying);
+		when(DAO.create(any(Saying.class))).thenReturn(saying);
 	}
 
 	@Test
@@ -40,7 +43,7 @@ public class SayingResourceTest {
 		assertThat(resources.client()
 				.target("/sayings/create")
 				.request()
-				.get(Saying.class)).isEqualTo(saying);
+				.post(Entity.json(saying), Saying.class)).isEqualTo(saying);
 		verify(DAO).create(any(Saying.class));
 	}
 }

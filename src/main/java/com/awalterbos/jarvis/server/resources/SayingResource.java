@@ -56,7 +56,7 @@ public class SayingResource {
 	@POST
 	@Path("/create")
 	@UnitOfWork
-	public Saying addSaying(@Valid Saying saying) {
+	public Saying addSaying(Saying saying) {
 		return sayingDAO.create(saying);
 	}
 }
