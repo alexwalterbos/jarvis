@@ -1,4 +1,4 @@
-package com.awalterbos.jarvis.server.entities;
+package com.awalterbos.jarvis.server.data.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

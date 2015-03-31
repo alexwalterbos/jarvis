@@ -1,7 +1,7 @@
 package com.awalterbos.jarvis.server.resources;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,8 +11,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.awalterbos.jarvis.server.SayingDAO;
-import com.awalterbos.jarvis.server.entities.Saying;
+import com.awalterbos.jarvis.server.data.daos.Sayings;
+import com.awalterbos.jarvis.server.data.entities.Saying;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import com.google.inject.Inject;
@@ -23,12 +23,12 @@ import io.dropwizard.hibernate.UnitOfWork;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SayingResource {
 
-	private SayingDAO sayingDAO;
+	private Sayings sayings;
 
 	@Inject
-	public SayingResource(SayingDAO sayingDAO){
+	public SayingResource(Sayings sayings){
 
-		this.sayingDAO = sayingDAO;
+		this.sayings = sayings;
 	}
 
 	@GET
@@ -41,7 +41,7 @@ public class SayingResource {
 	@Path("/{id}")
 	@UnitOfWork
 	public Saying get(@PathParam("id") Long id) {
-		return sayingDAO.findById(id);
+		return sayings.findById(id);
 	}
 
 	@GET
@@ -49,7 +49,7 @@ public class SayingResource {
 	@Timed
 	@UnitOfWork
 	public String say(@QueryParam("saying_id") Long id, @QueryParam("text") Optional<String> text) {
-		Saying saying = sayingDAO.findById(id);
+		Saying saying = sayings.findById(id);
 		return saying.format(text);
 	}
 
@@ -57,6 +57,19 @@ public class SayingResource {
 	@Path("/create")
 	@UnitOfWork
 	public Saying addSaying(Saying saying) {
-		return sayingDAO.create(saying);
+		return sayings.createOrUpdate(saying);
+	}
+
+	@DELETE
+	@Path("/delete/{id}")
+	@UnitOfWork
+	public Response delete(@PathParam("id") Long id) {
+		try {
+			sayings.delete(id);
+			return Response.ok().build();
+		}
+		catch (NullPointerException e) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
 	}
 }
