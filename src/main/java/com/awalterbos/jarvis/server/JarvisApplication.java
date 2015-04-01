@@ -32,6 +32,6 @@ public class JarvisApplication extends Application<JarvisConfiguration> {
 
 	@Override
 	public void run(JarvisConfiguration jarvisConfiguration, Environment environment) throws Exception {
-		// Configuration handles by bundle in {@initialize}
+		// Configuration handles by bundle in initialize()
 	}
 }
