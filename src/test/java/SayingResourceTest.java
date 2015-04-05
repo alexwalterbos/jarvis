@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
 
@@ -32,7 +33,7 @@ public class SayingResourceTest {
 	public void setup() {
 		doReturn(saying).when(DAO).findById(eq(1L));
 		doReturn(saying).when(DAO).createOrUpdate(any(Saying.class));
-		doReturn(null).when(DAO).findById(2L);
+		doThrow(new EntityNotFoundException()).when(DAO).findById(2L);
 		doThrow(new NullPointerException()).when(DAO).delete(eq(2L));
 	}
 

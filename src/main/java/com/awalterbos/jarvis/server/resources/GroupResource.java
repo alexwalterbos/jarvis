@@ -2,6 +2,7 @@ package com.awalterbos.jarvis.server.resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -21,9 +22,32 @@ public class GroupResource {
 	private Groups groups;
 
 	@GET
-	@Path("/{id}")
+	@Path("/{group_id}")
 	@UnitOfWork
-	public Group get(@PathParam("id") long id) {
+	public Group get(@PathParam("group_id") long id) {
 		return groups.findById(id);
+	}
+
+	// TODO PUT method
+
+	@POST
+	@Path("/create")
+	@UnitOfWork
+	public Group create(Group group) {
+		return groups.createOrUpdate(group);
+	}
+
+	@POST
+	@Path("/activate/{group_id}")
+	public void activate(@PathParam("group_id") long id) {
+		Group group = groups.findById(id);
+		group.activate();
+	}
+
+	@POST
+	@Path("/deactivate/{group_id}")
+	public void deactivate(@PathParam("group_id") long id) {
+		Group group = groups.findById(id);
+		group.deactivate();
 	}
 }

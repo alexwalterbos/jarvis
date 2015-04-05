@@ -2,7 +2,7 @@ package com.awalterbos.jarvis.server.data.daos;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
+import javax.persistence.EntityNotFoundException;
 
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
@@ -14,7 +14,11 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 	}
 
 	public T findById(long id) {
-		return get(id);
+		T t = get(id);
+		if (t == null) {
+			throw new EntityNotFoundException("Entity not found for id '" + id + "'");
+		}
+		return t;
 	}
 
 	public T createOrUpdate(T t) {
@@ -28,5 +32,4 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 	public void delete(long id) {
 		currentSession().delete(checkNotNull(findById(id)));
 	}
-
 }
