@@ -1,5 +1,6 @@
 package com.awalterbos.jarvis.server.resources;
 
+import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -8,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -21,12 +23,12 @@ import io.dropwizard.hibernate.UnitOfWork;
 @Path("/sayings")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class SayingResource {
+public class SayingsResource {
 
 	private Sayings sayings;
 
 	@Inject
-	public SayingResource(Sayings sayings){
+	public SayingsResource(Sayings sayings) {
 
 		this.sayings = sayings;
 	}
@@ -41,7 +43,12 @@ public class SayingResource {
 	@Path("/{id}")
 	@UnitOfWork
 	public Saying get(@PathParam("id") Long id) {
-		return sayings.findById(id);
+		try {
+			return sayings.findById(id);
+		}
+		catch (EntityNotFoundException e) {
+			throw new WebApplicationException(e, Response.Status.NOT_FOUND);
+		}
 	}
 
 	@GET

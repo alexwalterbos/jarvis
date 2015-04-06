@@ -12,19 +12,19 @@ import javax.ws.rs.core.Response;
 
 import com.awalterbos.jarvis.server.data.daos.Sayings;
 import com.awalterbos.jarvis.server.data.entities.Saying;
-import com.awalterbos.jarvis.server.resources.SayingResource;
+import com.awalterbos.jarvis.server.resources.SayingsResource;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-public class SayingResourceTest {
+public class SayingsResourceTest {
 
 	private static final Sayings DAO = mock(Sayings.class);
 
 	@ClassRule
 	public static final ResourceTestRule resources = ResourceTestRule.builder()
-			.addResource(new SayingResource(DAO))
+			.addResource(new SayingsResource(DAO))
 			.build();
 
 	private final Saying saying = new Saying().setFormat("Hello %s!").setDefaultText("Stranger");
@@ -41,6 +41,15 @@ public class SayingResourceTest {
 	public void testGetSaying() throws Exception {
 		assertThat(resources.client().target("/sayings/1").request().get(Saying.class)).isEqualTo(saying);
 		verify(DAO).findById(1l);
+	}
+
+	@Test
+	public void testGetNull() throws Exception {
+		Response response = resources.client()
+				.target("/sayings/2")
+				.request()
+				.get();
+		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NOT_FOUND);
 	}
 
 	@Test

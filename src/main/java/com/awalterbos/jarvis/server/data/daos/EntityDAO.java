@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.persistence.EntityNotFoundException;
 
+import java.util.Collection;
+
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 
@@ -11,6 +13,10 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 
 	public EntityDAO(SessionFactory sessionFactory) {
 		super(sessionFactory);
+	}
+
+	public Collection<T> list() {
+		return list();
 	}
 
 	public T findById(long id) {

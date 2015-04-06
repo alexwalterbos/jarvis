@@ -1,12 +1,17 @@
 package com.awalterbos.jarvis.server.resources;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import java.util.Collection;
 
 import com.awalterbos.jarvis.server.data.daos.Groups;
 import com.awalterbos.jarvis.server.data.entities.Group;
@@ -16,10 +21,21 @@ import io.dropwizard.hibernate.UnitOfWork;
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class GroupResource {
+public class GroupsResource {
+
+	private Groups groups;
 
 	@Inject
-	private Groups groups;
+	public GroupsResource(Groups groups){
+		this.groups = groups;
+	}
+
+	@GET
+	@Path("/")
+	@UnitOfWork
+	public Collection<Group> get() {
+		return groups.list();
+	}
 
 	@GET
 	@Path("/{group_id}")
@@ -37,17 +53,21 @@ public class GroupResource {
 		return groups.createOrUpdate(group);
 	}
 
-	@POST
+	@PUT
 	@Path("/activate/{group_id}")
-	public void activate(@PathParam("group_id") long id) {
+	public Response activate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
 		group.activate();
+
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
-	@POST
+	@DELETE
 	@Path("/deactivate/{group_id}")
-	public void deactivate(@PathParam("group_id") long id) {
+	public Response deactivate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
 		group.deactivate();
+
+		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 }

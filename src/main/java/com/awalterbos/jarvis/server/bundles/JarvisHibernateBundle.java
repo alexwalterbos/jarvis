@@ -1,9 +1,13 @@
 package com.awalterbos.jarvis.server.bundles;
 
 import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+
+import java.util.Set;
 
 import com.awalterbos.jarvis.server.JarvisConfiguration;
 import com.awalterbos.jarvis.server.JarvisApplication;
+import com.awalterbos.jarvis.server.data.entities.EntityWithID;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;
 import io.dropwizard.ConfiguredBundle;
@@ -22,7 +26,9 @@ public class JarvisHibernateBundle extends HibernateBundle<JarvisConfiguration> 
 
 	private static ImmutableList<Class<?>> myDbEntities() {
 		Reflections reflections = new Reflections(JarvisApplication.class.getPackage().getName());
-		return ImmutableList.copyOf(reflections.getTypesAnnotatedWith(Entity.class));
+		Set<Class<?>> entityClasses = reflections.getTypesAnnotatedWith(Entity.class);
+		entityClasses.remove(EntityWithID.class);
+		return ImmutableList.copyOf(entityClasses);
 	}
 
 	@Override
