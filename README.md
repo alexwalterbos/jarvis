@@ -4,7 +4,12 @@ The goal is to create a central control point for the connected equipment via va
 
 ## Hub
 Hub is Jarvis' component responsible for processing requests by a client, for example to send a codeword.
-It consists of a [Dropwizard](http://www.dropwizard.io/) setup that provides a RESTful API to communicate with.
+It consists of a [Dropwizard](http://www.dropwizard.io/) setup that provides: 
+
+* A RESTful API to handle HTTP requests
+* A database, handled via Hibernate
+* Injection of dropwizard components such as resources
+* A (currently underused) test suite
 
 ## Antenna
 Antenna provides an interface to a GPIO header using [Pi4J](http://pi4j.com/). 
