@@ -26,10 +26,10 @@ public class GroupsResourceTest {
 	public static final ResourceTestRule resources = ResourceTestRule.builder()
 			.addResource(new GroupsResource(DAO))
 			.build();
-	private static final int CHANNEL = 12345;
+	private static final int CODEWORD = 12345;
 
 	private final String testGroup = "TestGroup";
-	private final Group group = (Group) new Group().setChannel(CHANNEL).setDescription("TEST").setName(testGroup);
+	private final Group group = (Group) new Group().setCodeword(CODEWORD).setDescription("TEST").setName(testGroup);
 
 	@Before
 	public void setup() {

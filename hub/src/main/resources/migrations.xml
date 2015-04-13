@@ -76,4 +76,8 @@
 				onDelete="SET NULL"/>
 	</changeSet>
 
+	<changeSet id="rename_channel_to_codeword" author="awalterbos">
+		<renameColumn tableName="groups" oldColumnName="channel" newColumnName="codeword"/>
+	</changeSet>
+
 </databaseChangeLog>

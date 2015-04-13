@@ -8,16 +8,18 @@ import com.awalterbos.jarvis.server.exceptions.NotYetImplementedException;
 import com.awalterbos.jarvis.server.interfaces.Radio;
 import com.awalterbos.jarvis.server.interfaces.Receiver;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @MappedSuperclass
 @Accessors(chain = true)
 @Table(name = "groups")
 public class Group extends EntityWithID implements Receiver, Radio<Group> {
 
-	@Column(name = "channel")
-	private int channel;
+	@Column(name = "codeword")
+	private int codeword;
 
 	@Override
 	public void activate() {
