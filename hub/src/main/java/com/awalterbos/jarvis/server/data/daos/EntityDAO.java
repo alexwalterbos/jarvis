@@ -6,8 +6,13 @@ import javax.persistence.EntityNotFoundException;
 
 import java.util.Collection;
 
+import com.awalterbos.jarvis.server.data.entities.EntityWithID;
 import io.dropwizard.hibernate.AbstractDAO;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 
 public class EntityDAO<T> extends AbstractDAO<T> {
 
@@ -15,8 +20,9 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 		super(sessionFactory);
 	}
 
-	public Collection<T> list() {
-		return list();
+	public Collection<T> listAll() {
+		Criteria criteria = criteria().addOrder(Order.asc("id"));
+		return list(criteria);
 	}
 
 	public T findById(long id) {
@@ -27,8 +33,14 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 		return t;
 	}
 
-	public T createOrUpdate(T t) {
-		return persist(checkNotNull(t));
+	public T persistOrMerge(T t) {
+		if (currentSession().contains(t)) {
+			currentSession().merge(t);
+		}
+		else {
+			currentSession().persist(t);
+		}
+		return findById(((EntityWithID) t).getId());
 	}
 
 	public void delete(T t) {

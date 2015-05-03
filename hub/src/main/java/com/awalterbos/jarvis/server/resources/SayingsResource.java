@@ -64,7 +64,7 @@ public class SayingsResource {
 	@Path("/create")
 	@UnitOfWork
 	public Saying addSaying(Saying saying) {
-		return sayings.createOrUpdate(saying);
+		return sayings.persistOrMerge(saying);
 	}
 
 	@DELETE

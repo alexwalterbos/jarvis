@@ -1,5 +1,6 @@
 package com.awalterbos.jarvis.server;
 
+import com.awalterbos.antenna.Antenna;
 import com.awalterbos.jarvis.server.bundles.JarvisHibernateBundle;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -15,5 +16,10 @@ public class JarvisModule extends AbstractModule {
 
 	@Override
 	public void configure() {
+	}
+
+	@Provides
+	public Antenna antenna() {
+		return new Antenna();
 	}
 }

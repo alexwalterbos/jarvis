@@ -42,7 +42,7 @@
 					<archive>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<mainClass>com.awalterbos.antenna.test.Sender</mainClass>
+							<mainClass>com.awalterbos.antenna.Sender</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

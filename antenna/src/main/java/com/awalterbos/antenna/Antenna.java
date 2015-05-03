@@ -21,12 +21,27 @@ public class Antenna {
 	private static final int CODEWORD_LENGTH = 24;
 	private Protocol protocol;
 	private Pin transmitterPin;
+	private boolean test;
 
 	public Antenna() {
-		setProtocol(1);
-		transmitterPin = RaspiPin.GPIO_00;
+		init(1);
+	}
 
-		GpioFactory.getDefaultProvider().export(transmitterPin, PinMode.DIGITAL_OUTPUT, PinState.LOW);
+	public Antenna(int protocol) {
+		init(protocol);
+	}
+
+	public void init(int protocol) {
+		setProtocol(protocol);
+
+		try {
+			transmitterPin = RaspiPin.GPIO_00;
+			GpioFactory.getDefaultProvider().export(transmitterPin, PinMode.DIGITAL_OUTPUT, PinState.LOW);
+		}
+		catch (NoClassDefFoundError e) {
+			// Assume test mode
+			test = true;
+		}
 	}
 
 	public void setProtocol(int prot) {
@@ -91,6 +106,10 @@ public class Antenna {
 
 	public void transmit(int highPulseLength, int lowPulseLength) throws InterruptedException {
 		// TODO disable receive
+
+		if (test) {
+			return;
+		}
 
 		digitalWrite(transmitterPin.getAddress(), Gpio.HIGH);
 		delayMicro(highPulseLength);

@@ -8,15 +8,19 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.Collection;
 
+import com.awalterbos.antenna.Antenna;
 import com.awalterbos.jarvis.server.data.daos.Groups;
 import com.awalterbos.jarvis.server.data.entities.Group;
 import com.google.inject.Inject;
 import io.dropwizard.hibernate.UnitOfWork;
+import org.hibernate.exception.ConstraintViolationException;
+import org.postgresql.util.PSQLException;
 
 @Path("/groups")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,17 +28,19 @@ import io.dropwizard.hibernate.UnitOfWork;
 public class GroupsResource {
 
 	private Groups groups;
+	private Antenna antenna;
 
 	@Inject
-	public GroupsResource(Groups groups){
+	public GroupsResource(Groups groups, Antenna antenna) {
 		this.groups = groups;
+		this.antenna = antenna;
 	}
 
 	@GET
 	@Path("/")
 	@UnitOfWork
 	public Collection<Group> get() {
-		return groups.list();
+		return groups.listAll();
 	}
 
 	@GET
@@ -50,23 +56,25 @@ public class GroupsResource {
 	@Path("/create")
 	@UnitOfWork
 	public Group create(Group group) {
-		return groups.createOrUpdate(group);
+		return groups.persistOrMerge(group);
 	}
 
 	@PUT
 	@Path("/activate/{group_id}")
+	@UnitOfWork
 	public Response activate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
-		group.activate();
+		group.activate(antenna);
 
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}
 
 	@DELETE
 	@Path("/deactivate/{group_id}")
+	@UnitOfWork
 	public Response deactivate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
-		group.deactivate();
+		group.deactivate(antenna);
 
 		return Response.status(Response.Status.NO_CONTENT).build();
 	}

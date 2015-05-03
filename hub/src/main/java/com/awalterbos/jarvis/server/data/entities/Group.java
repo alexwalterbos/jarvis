@@ -1,35 +1,52 @@
 package com.awalterbos.jarvis.server.data.entities;
 
 import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.awalterbos.jarvis.server.exceptions.NotYetImplementedException;
+import com.awalterbos.antenna.Antenna;
 import com.awalterbos.jarvis.server.interfaces.Radio;
 import com.awalterbos.jarvis.server.interfaces.Receiver;
+import lombok.AccessLevel;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.hibernate.validator.constraints.NotEmpty;
 
-@EqualsAndHashCode(callSuper = false)
 @Data
-@MappedSuperclass
 @Accessors(chain = true)
+@Entity
+@ToString(of = { "id", "name", "description" })
 @Table(name = "groups")
-public class Group extends EntityWithID implements Receiver, Radio<Group> {
+public class Group implements EntityWithID, Receiver, Radio<Group> {
 
-	@Column(name = "codeword")
-	private int codeword;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", nullable = false)
+	@Setter(AccessLevel.NONE)
+	private long id;
 
-	@Override
-	public void activate() {
-		// TODO send signal <channel> ON
-		throw new NotYetImplementedException();
+	@NotEmpty(message = "You must specify a name for the entity")
+	@Column(name = "name", nullable = false, length = 32)
+	private String name;
+
+	@Column(name = "description")
+	private String description;
+
+	@Column(name = "signal_on")
+	private int signalOn;
+	@Column(name = "signal_off")
+	private int signalOff;
+
+	public void activate(Antenna antenna) {
+		antenna.send(signalOn);
 	}
 
-	@Override
-	public void deactivate() {
-		// TODO send signal <channel> OFF
-		throw new NotYetImplementedException();
+	public void deactivate(Antenna antenna) {
+		antenna.send(signalOff);
 	}
 }

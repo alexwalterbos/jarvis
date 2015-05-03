@@ -1,4 +1,4 @@
-package com.awalterbos.antenna.test;
+package com.awalterbos.antenna;
 
 import java.util.Arrays;
 import java.util.List;

@@ -80,4 +80,13 @@
 		<renameColumn tableName="groups" oldColumnName="channel" newColumnName="codeword"/>
 	</changeSet>
 
+	<changeSet id="rename_codeword_to_signal" author="awalterbos">
+		<renameColumn tableName="groups" oldColumnName="codeword" newColumnName="signal_on"/>
+		<addColumn tableName="groups">
+			<column name="signal_off" type="int">
+				<constraints nullable="false" unique="true"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
