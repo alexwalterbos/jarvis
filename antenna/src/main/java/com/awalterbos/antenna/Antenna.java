@@ -38,7 +38,8 @@ public class Antenna {
 			transmitterPin = RaspiPin.GPIO_00;
 			GpioFactory.getDefaultProvider().export(transmitterPin, PinMode.DIGITAL_OUTPUT, PinState.LOW);
 		}
-		catch (NoClassDefFoundError e) {
+		catch (NoClassDefFoundError | UnsatisfiedLinkError e) {
+			System.out.println("Started in test mode due to missing low-level dependencies for Antenna");
 			// Assume test mode
 			test = true;
 		}

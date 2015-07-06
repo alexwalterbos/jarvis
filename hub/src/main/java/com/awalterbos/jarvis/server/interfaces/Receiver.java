@@ -4,8 +4,8 @@ import com.awalterbos.antenna.Antenna;
 
 public interface Receiver {
 
-	public void activate(Antenna antenna);
+	void activate(Antenna antenna);
 
-	public void deactivate(Antenna antenna);
+	void deactivate(Antenna antenna);
 
 }

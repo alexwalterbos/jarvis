@@ -26,7 +26,7 @@ public class Group implements EntityWithID, Receiver, Radio<Group> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false)
+	@Column(name = "id")
 	@Setter(AccessLevel.NONE)
 	private long id;
 
@@ -37,10 +37,14 @@ public class Group implements EntityWithID, Receiver, Radio<Group> {
 	@Column(name = "description")
 	private String description;
 
+	@Column(name = "trigger_on_sunset")
+	private Boolean triggerOnSunset;
+
 	@Column(name = "signal_on")
-	private int signalOn;
+	private Integer signalOn;
+
 	@Column(name = "signal_off")
-	private int signalOff;
+	private Integer signalOff;
 
 	public void activate(Antenna antenna) {
 		antenna.send(signalOn);

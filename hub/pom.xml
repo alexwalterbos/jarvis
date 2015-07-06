@@ -55,6 +55,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.luckycatlabs</groupId>
+			<artifactId>SunriseSunsetCalculator</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
 			<groupId>com.awalterbos</groupId>
 			<artifactId>antenna</artifactId>
 			<version>0.0.1-SNAPSHOT</version>

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import javax.net.ssl.SSLEngineResult;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -54,6 +55,34 @@ public class GroupsResourceTest {
 	}
 
 	@Test
+	public void testUpdateGroup() {
+		createGroup(group);
+
+		Group group = this.group;
+		group.setDescription("Updated description");
+
+		Group result = resources.client()
+				.target("/groups")
+				.request()
+				.put(Entity.json(group), Group.class);
+		assertThat(result).isEqualTo(group);
+
+		result = resources.client()
+				.target("/groups")
+				.request()
+				.get(Group.class);
+		assertThat(result).isEqualTo(group);
+
+		group.setDescription(null);
+
+		result = resources.client()
+				.target("/groups")
+				.request()
+				.put(Entity.json(group), Group.class);
+		assertThat(result).isEqualTo(group);
+	}
+
+	@Test
 	public void testCreateGroup() {
 		Group result = resources.client()
 				.target("/groups/create/")
@@ -74,5 +103,39 @@ public class GroupsResourceTest {
 		Response result = resources.client().target("/groups/deactivate/1").request().delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
+	}
+
+	@Test
+	public void storylineTest() {
+		createGroup(group);
+
+		activateGroup();
+
+		group.setDescription("TestGroupTest");
+
+		updateGroup(group);
+	}
+
+	private void createGroup(Group group) {
+		Response post = resources.client()
+				.target("/groups/create/")
+				.request()
+				.post(Entity.json(group));
+
+		assertThat(post.getStatusInfo()).isEqualTo(Response.Status.OK);
+	}
+
+	private void updateGroup(Group group) {
+		Response response = resources.client()
+				.target("/groups")
+				.request()
+				.put(Entity.json(group));
+
+		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
+	}
+
+	private void activate(Group group) {
+		Response result = resources.client().target("/groups/activate/1").request().put(Entity.json(""));
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 	}
 }

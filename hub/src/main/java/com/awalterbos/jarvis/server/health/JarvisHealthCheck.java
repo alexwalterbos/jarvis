@@ -4,8 +4,6 @@ import com.awalterbos.jarvis.server.JarvisApplication;
 import com.hubspot.dropwizard.guice.InjectableHealthCheck;
 
 public class JarvisHealthCheck extends InjectableHealthCheck {
-
-
 	@Override
 	public String getName() {
 		return JarvisApplication.NAME;

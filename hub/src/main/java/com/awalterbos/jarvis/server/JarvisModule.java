@@ -4,7 +4,7 @@ import com.awalterbos.antenna.Antenna;
 import com.awalterbos.jarvis.server.bundles.JarvisHibernateBundle;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import lombok.extern.slf4j.Slf4j;
+import com.google.inject.Singleton;
 import org.hibernate.SessionFactory;
 
 public class JarvisModule extends AbstractModule {
@@ -18,6 +18,7 @@ public class JarvisModule extends AbstractModule {
 	public void configure() {
 	}
 
+	@Singleton
 	@Provides
 	public Antenna antenna() {
 		return new Antenna();

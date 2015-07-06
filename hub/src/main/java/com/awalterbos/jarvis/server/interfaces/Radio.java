@@ -2,10 +2,10 @@ package com.awalterbos.jarvis.server.interfaces;
 
 public interface Radio<T> {
 
-	int getSignalOn();
-	int getSignalOff();
+	Integer getSignalOn();
+	Integer getSignalOff();
 
-	T setSignalOn(int signalOn);
-	T setSignalOff(int signalOff);
+	T setSignalOn(Integer signalOn);
+	T setSignalOff(Integer signalOff);
 
 }

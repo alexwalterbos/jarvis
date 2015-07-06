@@ -89,4 +89,12 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="add_sunset_field_to_group" author="awalterbos">
+		<addColumn tableName="groups">
+			<column name="trigger_on_sunset" type="boolean" defaultValue="false">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

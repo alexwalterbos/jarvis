@@ -19,10 +19,11 @@ import com.awalterbos.jarvis.server.data.daos.Groups;
 import com.awalterbos.jarvis.server.data.entities.Group;
 import com.google.inject.Inject;
 import io.dropwizard.hibernate.UnitOfWork;
+import org.assertj.core.util.Strings;
 import org.hibernate.exception.ConstraintViolationException;
 import org.postgresql.util.PSQLException;
 
-@Path("/groups")
+@Path("/groups/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GroupsResource {
@@ -37,30 +38,60 @@ public class GroupsResource {
 	}
 
 	@GET
-	@Path("/")
 	@UnitOfWork
 	public Collection<Group> get() {
 		return groups.listAll();
 	}
 
 	@GET
-	@Path("/{group_id}")
+	@Path("{group_id}")
 	@UnitOfWork
 	public Group get(@PathParam("group_id") long id) {
 		return groups.findById(id);
 	}
 
-	// TODO PUT method
+	@PUT
+	@UnitOfWork
+	public Group update(Group group) {
+		Group fromDB = groups.findById(group.getId());
+
+		if (!Strings.isNullOrEmpty(group.getName())) {
+			fromDB.setName(group.getName());
+		}
+
+		if (group.getDescription() != null) {
+			if(group.getDescription().isEmpty()){
+				fromDB.setDescription(null);
+			}
+			else {
+				fromDB.setDescription(group.getDescription());
+			}
+		}
+
+		if (group.getSignalOff() != null) {
+			fromDB.setSignalOff(group.getSignalOff());
+		}
+
+		if (group.getSignalOn() != null) {
+			fromDB.setSignalOn(group.getSignalOn());
+		}
+
+		if (group.getTriggerOnSunset() != null) {
+			fromDB.setTriggerOnSunset(group.getTriggerOnSunset());
+		}
+
+		return groups.persistOrMerge(group);
+	}
 
 	@POST
-	@Path("/create")
+	@Path("create")
 	@UnitOfWork
 	public Group create(Group group) {
 		return groups.persistOrMerge(group);
 	}
 
 	@PUT
-	@Path("/activate/{group_id}")
+	@Path("activate/{group_id}")
 	@UnitOfWork
 	public Response activate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
@@ -70,7 +101,7 @@ public class GroupsResource {
 	}
 
 	@DELETE
-	@Path("/deactivate/{group_id}")
+	@Path("deactivate/{group_id}")
 	@UnitOfWork
 	public Response deactivate(@PathParam("group_id") long id) {
 		Group group = groups.findById(id);
