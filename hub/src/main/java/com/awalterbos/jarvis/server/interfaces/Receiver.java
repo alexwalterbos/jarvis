@@ -4,8 +4,8 @@ import com.awalterbos.antenna.Antenna;
 
 public interface Receiver {
 
-	void activate(Antenna antenna);
+	void activate(Antenna antenna) throws InterruptedException;
 
-	void deactivate(Antenna antenna);
+	void deactivate(Antenna antenna) throws InterruptedException;
 
 }

@@ -46,11 +46,11 @@ public class Group implements EntityWithID, Receiver, Radio<Group> {
 	@Column(name = "signal_off")
 	private Integer signalOff;
 
-	public void activate(Antenna antenna) {
+	public void activate(Antenna antenna) throws InterruptedException {
 		antenna.send(signalOn);
 	}
 
-	public void deactivate(Antenna antenna) {
+	public void deactivate(Antenna antenna) throws InterruptedException {
 		antenna.send(signalOff);
 	}
 }

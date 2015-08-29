@@ -7,10 +7,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
-import javax.net.ssl.SSLEngineResult;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.awalterbos.jarvis.server.JarvisModule;
 import com.awalterbos.jarvis.server.data.daos.Groups;
@@ -50,15 +52,17 @@ public class GroupsResourceTest {
 
 		doReturn(group).when(DAO).findById(eq(1L));
 		doReturn(group).when(DAO).persistOrMerge(any(Group.class));
+		ArrayList<Group> toBeReturned = new ArrayList<Group>();
+		toBeReturned.add(group);
+		doReturn(toBeReturned).when(DAO).listAll();
 		doThrow(new EntityNotFoundException()).when(DAO).findById(eq(2L));
 		doThrow(new NullPointerException()).when(DAO).delete(eq(2L));
 	}
 
 	@Test
 	public void testUpdateGroup() {
-		createGroup(group);
+		Group group = createGroup(this.group);
 
-		Group group = this.group;
 		group.setDescription("Updated description");
 
 		Group result = resources.client()
@@ -89,40 +93,63 @@ public class GroupsResourceTest {
 				.request()
 				.post(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
+
+		resources.client()
+				.target("/groups")
+				.request()
+				.get(Collection.class);
 	}
 
 	@Test
-	public void activateGroup() {
+	public void testActivateGroup() {
 		Response result = resources.client().target("/groups/activate/1").request().put(Entity.json(""));
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
 
 	@Test
-	public void deactivateGroup() {
+	public void testActivateAll() {
+		Response result = resources.client().target("groups/activate_all").request().get();
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
+		System.out.println(result);
+	}
+
+	@Test
+	public void testDeactivateGroup() {
 		Response result = resources.client().target("/groups/deactivate/1").request().delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
 
 	@Test
-	public void storylineTest() {
-		createGroup(group);
+	public void testDeactivateAll() {
+		Response result = resources.client().target("groups/deactivate_all").request().get();
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
+		System.out.println(result);
+	}
 
-		activateGroup();
+	@Test
+	public void storylineTest() {
+		Group group = createGroup(this.group);
+
+		activate(group);
 
 		group.setDescription("TestGroupTest");
 
 		updateGroup(group);
+
+		deactivate(group);
 	}
 
-	private void createGroup(Group group) {
-		Response post = resources.client()
+	private Group createGroup(Group group) {
+		Group response = resources.client()
 				.target("/groups/create/")
 				.request()
-				.post(Entity.json(group));
+				.post(Entity.json(group), Group.class);
 
-		assertThat(post.getStatusInfo()).isEqualTo(Response.Status.OK);
+		assertThat(response).isEqualTo(group);
+
+		return response;
 	}
 
 	private void updateGroup(Group group) {
@@ -135,7 +162,16 @@ public class GroupsResourceTest {
 	}
 
 	private void activate(Group group) {
-		Response result = resources.client().target("/groups/activate/1").request().put(Entity.json(""));
+		Response result = resources.client().target("/groups/activate/" + group.getId())
+				.request()
+				.put(Entity.json(""));
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
+	}
+
+	private void deactivate(Group group) {
+		Response result = resources.client().target("/groups/deactivate/" + group.getId())
+				.request()
+				.delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 	}
 }

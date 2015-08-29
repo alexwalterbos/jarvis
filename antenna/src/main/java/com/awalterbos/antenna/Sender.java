@@ -3,8 +3,6 @@ package com.awalterbos.antenna;
 import java.util.Arrays;
 import java.util.List;
 
-import com.awalterbos.antenna.Antenna;
-
 public class Sender {
 
 	public static void main(String[] args) {
@@ -22,7 +20,12 @@ public class Sender {
 			return;
 		}
 
-		new Antenna().send(code);
+		try {
+			new Antenna().send(code);
+		}
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println("[Sender offline]");
 		System.exit(0);
 	}

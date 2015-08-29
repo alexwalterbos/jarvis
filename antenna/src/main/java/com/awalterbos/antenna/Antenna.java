@@ -54,7 +54,7 @@ public class Antenna {
 		}
 	}
 
-	public void send(int code) {
+	public void send(int code) throws InterruptedException {
 		char[] binaryChars = dec2binWzerofill(code, CODEWORD_LENGTH);
 		System.out.println(String.format("Sending '%d' as '%s' ", code, String.valueOf(binaryChars)));
 		send(binaryChars);
@@ -83,25 +83,20 @@ public class Antenna {
 		return Arrays.copyOfRange(bin, 0, bitLength);
 	}
 
-	public void send(char[] codeWord) {
-		try {
-			for (int i = 0; i < REPEAT_SEND; i++) {
-				for (char aCodeWord : codeWord) {
-					switch (aCodeWord) {
-						case '0':
-							protocol.send0();
-							break;
-						case '1':
-							protocol.send1();
-							break;
-					}
+	public void send(char[] codeWord) throws InterruptedException {
+		for (int i = 0; i < REPEAT_SEND; i++) {
+			for (char aCodeWord : codeWord) {
+				switch (aCodeWord) {
+					case '0':
+						protocol.send0();
+						break;
+					case '1':
+						protocol.send1();
+						break;
 				}
-
-				protocol.sendSync();
 			}
-		}
-		catch (InterruptedException e) {
-			e.printStackTrace();
+
+			protocol.sendSync();
 		}
 	}
 
