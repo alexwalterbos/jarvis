@@ -1,7 +1,7 @@
 package com.awalterbos.jarvis.server.data.entities;
 
 public interface EntityWithID {
-	long getId();
+	Long getId();
 	String getName();
 	String getDescription();
 }

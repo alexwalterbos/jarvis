@@ -25,8 +25,7 @@ public class Light implements EntityWithID {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
-	@Setter(AccessLevel.NONE)
-	private long id;
+	private Long id;
 
 	@NotEmpty(message = "You must specify a name for the entity")
 	@Column(name = "name", nullable = false, length = 32)

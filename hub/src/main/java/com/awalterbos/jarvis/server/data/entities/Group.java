@@ -27,8 +27,7 @@ public class Group implements EntityWithID, Receiver, Radio<Group> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	@Setter(AccessLevel.NONE)
-	private long id;
+	private Long id;
 
 	@NotEmpty(message = "You must specify a name for the entity")
 	@Column(name = "name", nullable = false, length = 32)

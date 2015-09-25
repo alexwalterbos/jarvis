@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class GroupsResourceTest {
 			.build();
 	private static final int SIGNAL_OFF = 12345;
 	private static final int SIGNAL_ON = 54321;
+	private long newId = 0L;
 
 	private Group group;
 
@@ -50,13 +52,18 @@ public class GroupsResourceTest {
 				.setName("TestGroup")
 				.setDescription("Test");
 
-		doReturn(group).when(DAO).findById(eq(1L));
-		doReturn(group).when(DAO).persistOrMerge(any(Group.class));
+		doReturn(group).when(DAO).findById(any(Long.class));
+		doReturn(group.setId(incrementAndGetNewId())).when(DAO).persistOrMerge(any(Group.class));
 		ArrayList<Group> toBeReturned = new ArrayList<Group>();
 		toBeReturned.add(group);
 		doReturn(toBeReturned).when(DAO).listAll();
 		doThrow(new EntityNotFoundException()).when(DAO).findById(eq(2L));
 		doThrow(new NullPointerException()).when(DAO).delete(eq(2L));
+	}
+
+	private long incrementAndGetNewId() {
+		newId += 1;
+		return newId;
 	}
 
 	@Test
@@ -66,23 +73,15 @@ public class GroupsResourceTest {
 		group.setDescription("Updated description");
 
 		Group result = resources.client()
-				.target("/groups")
+				.target("/groups/")
 				.request()
 				.put(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 
 		result = resources.client()
-				.target("/groups")
+				.target("/groups/" + result.getId())
 				.request()
 				.get(Group.class);
-		assertThat(result).isEqualTo(group);
-
-		group.setDescription(null);
-
-		result = resources.client()
-				.target("/groups")
-				.request()
-				.put(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 	}
 
@@ -95,7 +94,7 @@ public class GroupsResourceTest {
 		assertThat(result).isEqualTo(group);
 
 		resources.client()
-				.target("/groups")
+				.target("/groups/")
 				.request()
 				.get(Collection.class);
 	}
@@ -109,7 +108,7 @@ public class GroupsResourceTest {
 
 	@Test
 	public void testActivateAll() {
-		Response result = resources.client().target("groups/activate_all").request().get();
+		Response result = resources.client().target("/groups/activate_all").request().get();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
@@ -123,7 +122,7 @@ public class GroupsResourceTest {
 
 	@Test
 	public void testDeactivateAll() {
-		Response result = resources.client().target("groups/deactivate_all").request().get();
+		Response result = resources.client().target("/groups/deactivate_all").request().get();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
