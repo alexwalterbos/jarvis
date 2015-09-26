@@ -7,6 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 import com.awalterbos.jarvis.server.data.entities.EntityWithID;
+import com.sun.xml.internal.ws.api.model.wsdl.editable.EditableWSDLInput;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -31,6 +32,11 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 			throw new EntityNotFoundException("Entity not found for id '" + id + "'");
 		}
 		return t;
+	}
+
+	public T merge(T t) {
+		currentSession().merge(t);
+		return findById(((EntityWithID) t).getId());
 	}
 
 	public T persistOrMerge(T t) {

@@ -9,7 +9,6 @@ import static org.mockito.Mockito.mock;
 
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
 import java.util.ArrayList;
@@ -53,6 +52,7 @@ public class GroupsResourceTest {
 				.setDescription("Test");
 
 		doReturn(group).when(DAO).findById(any(Long.class));
+		doReturn(group).when(DAO).merge(any(Group.class));
 		doReturn(group.setId(incrementAndGetNewId())).when(DAO).persistOrMerge(any(Group.class));
 		ArrayList<Group> toBeReturned = new ArrayList<Group>();
 		toBeReturned.add(group);

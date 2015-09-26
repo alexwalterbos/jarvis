@@ -77,7 +77,7 @@ public class GroupsResource {
 			fromDB.setTriggerOnSunset(group.getTriggerOnSunset());
 		}
 
-		return groups.persistOrMerge(group);
+		return groups.merge(group);
 	}
 
 	@POST
