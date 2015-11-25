@@ -1,10 +1,12 @@
-package com.awalterbos.antenna;
+package com.awalterbos.clifton;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class Sender {
+import com.awalterbos.antenna.Antenna;
+import com.awalterbos.protocol.ProtocolOne;
 
+public class Clifton {
 	public static void main(String[] args) {
 		System.out.println("[Sender online]");
 
@@ -21,7 +23,7 @@ public class Sender {
 		}
 
 		try {
-			new Antenna().send(code);
+			new Antenna().send(new ProtocolOne(), code);
 		}
 		catch (InterruptedException e) {
 			e.printStackTrace();
