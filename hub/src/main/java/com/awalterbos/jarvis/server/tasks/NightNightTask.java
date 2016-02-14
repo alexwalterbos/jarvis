@@ -16,7 +16,6 @@ import org.joda.time.LocalDateTime;
 public class NightNightTask extends AbstractScheduledService {
 	public static final int INTERVAL = 30;
 	public static final TimeUnit INTERVAL_UNIT = TimeUnit.MINUTES;
-	public static final LocalDateTime NIGHT_TIME = LocalDateTime.now(DateTimeZone.forID("Europe/Amsterdam")).withHourOfDay(1).withMinuteOfHour(0);
 	private final SessionFactory sessionFactory;
 	private GroupsBackend groupsBackend;
 
@@ -32,9 +31,11 @@ public class NightNightTask extends AbstractScheduledService {
 	@Override
 	protected void runOneIteration() throws Exception {
 		LocalDateTime now = LocalDateTime.now(DateTimeZone.forID("Europe/Amsterdam"));
-		if (!shouldRun(now)) {
+		LocalDateTime nightTime =
+				LocalDateTime.now(DateTimeZone.forID("Europe/Amsterdam")).withHourOfDay(1).withMinuteOfHour(0);
+		if (!shouldRun(now, nightTime)) {
 			System.out.println("[" + now.toLocalTime().toString() + "] NightNightTask not run. Night time: "
-					+ NIGHT_TIME.toLocalTime().toString() + ", interval: " + INTERVAL + " " + INTERVAL_UNIT.name()
+					+ nightTime.toLocalTime().toString() + ", interval: " + INTERVAL + " " + INTERVAL_UNIT.name()
 					.toLowerCase() + ".");
 			return;
 		}
@@ -59,9 +60,9 @@ public class NightNightTask extends AbstractScheduledService {
 		System.out.println("NightNightTask completed.");
 	}
 
-	public static boolean shouldRun(LocalDateTime now) {
-		return now.isAfter(NIGHT_TIME) &&
-				TimeUtil.getNowPlusInterval(now, INTERVAL * -1, INTERVAL_UNIT).isBefore(NIGHT_TIME);
+	public static boolean shouldRun(LocalDateTime now, LocalDateTime nightTime) {
+		return now.isAfter(nightTime) &&
+				TimeUtil.getNowPlusInterval(now, INTERVAL * -1, INTERVAL_UNIT).isBefore(nightTime);
 	}
 
 	@Override
