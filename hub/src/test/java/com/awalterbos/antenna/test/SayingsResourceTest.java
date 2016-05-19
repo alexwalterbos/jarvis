@@ -41,14 +41,14 @@ public class SayingsResourceTest {
 
 	@Test
 	public void testGetSaying() throws Exception {
-		assertThat(resources.client().target("/sayings/1").request().get(Saying.class)).isEqualTo(saying);
+		assertThat(resources.client().target("/api/sayings/1").request().get(Saying.class)).isEqualTo(saying);
 		verify(DAO).findById(1l);
 	}
 
 	@Test
 	public void testGetNull() throws Exception {
 		Response response = resources.client()
-				.target("/sayings/2")
+				.target("/api/sayings/2")
 				.request()
 				.get();
 		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NOT_FOUND);
@@ -57,7 +57,7 @@ public class SayingsResourceTest {
 	@Test
 	public void testAddSaying() throws Exception {
 		assertThat(resources.client()
-				.target("/sayings/create")
+				.target("/api/sayings/create")
 				.request()
 				.post(Entity.json(saying), Saying.class)).isEqualTo(saying);
 		verify(DAO).persistOrMerge(any(Saying.class));
@@ -66,7 +66,7 @@ public class SayingsResourceTest {
 	@Test
 	public void testDeleteSaying() throws Exception {
 		Response response = resources.client()
-				.target("/sayings/delete/1")
+				.target("/api/sayings/delete/1")
 				.request()
 				.delete();
 		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
@@ -77,7 +77,7 @@ public class SayingsResourceTest {
 	@Test
 	public void testDeleteNull() throws Exception {
 		Response response = resources.client()
-				.target("/sayings/delete/2")
+				.target("/api/sayings/delete/2")
 				.request()
 				.delete();
 		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NOT_FOUND);

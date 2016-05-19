@@ -73,13 +73,13 @@ public class GroupsResourceTest {
 		group.setDescription("Updated description");
 
 		Group result = resources.client()
-				.target("/groups/")
+				.target("/api/groups/")
 				.request()
 				.put(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 
 		result = resources.client()
-				.target("/groups/" + result.getId())
+				.target("/api/groups/" + result.getId())
 				.request()
 				.get(Group.class);
 		assertThat(result).isEqualTo(group);
@@ -88,41 +88,41 @@ public class GroupsResourceTest {
 	@Test
 	public void testCreateGroup() {
 		Group result = resources.client()
-				.target("/groups/create/")
+				.target("/api/groups/create/")
 				.request()
 				.post(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 
 		resources.client()
-				.target("/groups/")
+				.target("/api/groups/")
 				.request()
 				.get(Collection.class);
 	}
 
 	@Test
 	public void testActivateGroup() {
-		Response result = resources.client().target("/groups/activate/1").request().put(Entity.json(""));
+		Response result = resources.client().target("/api/groups/activate/1").request().put(Entity.json(""));
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
 
 	@Test
 	public void testActivateAll() {
-		Response result = resources.client().target("/groups/activate_all").request().get();
+		Response result = resources.client().target("/api/groups/activate_all").request().get();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
 
 	@Test
 	public void testDeactivateGroup() {
-		Response result = resources.client().target("/groups/deactivate/1").request().delete();
+		Response result = resources.client().target("/api/groups/deactivate/1").request().delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
 
 	@Test
 	public void testDeactivateAll() {
-		Response result = resources.client().target("/groups/deactivate_all").request().get();
+		Response result = resources.client().target("/api/groups/deactivate_all").request().get();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 		System.out.println(result);
 	}
@@ -142,7 +142,7 @@ public class GroupsResourceTest {
 
 	private Group createGroup(Group group) {
 		Group response = resources.client()
-				.target("/groups/create/")
+				.target("/api/groups/create/")
 				.request()
 				.post(Entity.json(group), Group.class);
 
@@ -153,7 +153,7 @@ public class GroupsResourceTest {
 
 	private void updateGroup(Group group) {
 		Response response = resources.client()
-				.target("/groups")
+				.target("/api/groups")
 				.request()
 				.put(Entity.json(group));
 
@@ -161,14 +161,14 @@ public class GroupsResourceTest {
 	}
 
 	private void activate(Group group) {
-		Response result = resources.client().target("/groups/activate/" + group.getId())
+		Response result = resources.client().target("/api/groups/activate/" + group.getId())
 				.request()
 				.put(Entity.json(""));
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 	}
 
 	private void deactivate(Group group) {
-		Response result = resources.client().target("/groups/deactivate/" + group.getId())
+		Response result = resources.client().target("/api/groups/deactivate/" + group.getId())
 				.request()
 				.delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));

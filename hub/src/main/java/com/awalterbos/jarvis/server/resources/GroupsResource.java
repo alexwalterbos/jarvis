@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 import io.dropwizard.hibernate.UnitOfWork;
 import org.assertj.core.util.Strings;
 
-@Path("/groups/")
+@Path("/api/groups/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GroupsResource {
