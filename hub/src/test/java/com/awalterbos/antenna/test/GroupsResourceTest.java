@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.awalterbos.jarvis.server.GroupsBackend;
 import com.awalterbos.jarvis.server.JarvisModule;
 import com.awalterbos.jarvis.server.data.daos.Groups;
 import com.awalterbos.jarvis.server.data.entities.Group;
@@ -23,18 +24,16 @@ import com.google.inject.Injector;
 import com.google.inject.util.Modules;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class GroupsResourceTest {
 
 	private static final Groups DAO = mock(Groups.class);
 
-	private static final MockAntenna antenna = new MockAntenna();
-
-	@ClassRule
-	public static final ResourceTestRule resources = ResourceTestRule.builder()
-			.addResource(new GroupsResource(DAO, antenna))
+	@Rule
+	public final ResourceTestRule resources = ResourceTestRule.builder()
+			.addResource(new GroupsResource(mock(GroupsBackend.class)))
 			.build();
 	private static final int SIGNAL_OFF = 12345;
 	private static final int SIGNAL_ON = 54321;

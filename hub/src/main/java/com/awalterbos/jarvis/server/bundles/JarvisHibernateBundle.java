@@ -1,12 +1,11 @@
 package com.awalterbos.jarvis.server.bundles;
 
 import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
 
 import java.util.Set;
 
-import com.awalterbos.jarvis.server.JarvisConfiguration;
 import com.awalterbos.jarvis.server.JarvisApplication;
+import com.awalterbos.jarvis.server.JarvisConfiguration;
 import com.awalterbos.jarvis.server.data.entities.EntityWithID;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Singleton;

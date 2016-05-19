@@ -11,6 +11,8 @@
 	<modules>
 		<module>antenna</module>
 		<module>hub</module>
+		<module>clifton</module>
+		<module>protocol</module>
 	</modules>
 
 

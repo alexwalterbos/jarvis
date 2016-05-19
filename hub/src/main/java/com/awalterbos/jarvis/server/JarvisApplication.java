@@ -1,11 +1,9 @@
 package com.awalterbos.jarvis.server;
 
-import com.awalterbos.jarvis.server.health.JarvisHealthCheck;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import lombok.SneakyThrows;
 
 public class JarvisApplication extends Application<JarvisConfiguration> {
 
@@ -33,6 +31,6 @@ public class JarvisApplication extends Application<JarvisConfiguration> {
 
 	@Override
 	public void run(JarvisConfiguration jarvisConfiguration, Environment environment) throws Exception {
-		// Configuration handled by bundle in initialize()
+		// Everything is auto-configured in initialize()
 	}
 }

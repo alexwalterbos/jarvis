@@ -7,11 +7,8 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 import com.awalterbos.jarvis.server.data.entities.EntityWithID;
-import com.sun.xml.internal.ws.api.model.wsdl.editable.EditableWSDLInput;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 
@@ -47,6 +44,10 @@ public class EntityDAO<T> extends AbstractDAO<T> {
 			currentSession().persist(t);
 		}
 		return findById(((EntityWithID) t).getId());
+	}
+
+	public T persist(T t) {
+		return super.persist(t);
 	}
 
 	public void delete(T t) {

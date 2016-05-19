@@ -13,87 +13,55 @@ import javax.ws.rs.core.Response;
 
 import java.util.Collection;
 
-import com.awalterbos.antenna.Antenna;
-import com.awalterbos.jarvis.server.data.daos.Groups;
+import com.awalterbos.jarvis.server.GroupsBackend;
 import com.awalterbos.jarvis.server.data.entities.Group;
 import com.google.inject.Inject;
 import io.dropwizard.hibernate.UnitOfWork;
-import org.assertj.core.util.Strings;
 
 @Path("/api/groups/")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GroupsResource {
 
-	private Groups groups;
-	private Antenna antenna;
-
+	private GroupsBackend groupsBackend;
 	@Inject
-	public GroupsResource(Groups groups, Antenna antenna) {
-		this.groups = groups;
-		this.antenna = antenna;
+
+	public GroupsResource(GroupsBackend groupsBackend) {
+		this.groupsBackend = groupsBackend;
 	}
 
 	@GET
 	@UnitOfWork
 	public Collection<Group> get() {
-		return groups.listAll();
+		return groupsBackend.listAll();
 	}
 
 	@GET
 	@Path("{group_id}")
 	@UnitOfWork
 	public Group get(@PathParam("group_id") long id) {
-		return groups.findById(id);
+		return groupsBackend.findById(id);
 	}
 
 	@PUT
 	@UnitOfWork
 	public Group update(Group group) {
-		Group fromDB = groups.findById(group.getId());
-
-		if (!Strings.isNullOrEmpty(group.getName())) {
-			fromDB.setName(group.getName());
-		}
-
-		if (group.getDescription() != null) {
-			if(group.getDescription().isEmpty()){
-				fromDB.setDescription(null);
-			}
-			else {
-				fromDB.setDescription(group.getDescription());
-			}
-		}
-
-		if (group.getSignalOff() != null) {
-			fromDB.setSignalOff(group.getSignalOff());
-		}
-
-		if (group.getSignalOn() != null) {
-			fromDB.setSignalOn(group.getSignalOn());
-		}
-
-		if (group.getTriggerOnSunset() != null) {
-			fromDB.setTriggerOnSunset(group.getTriggerOnSunset());
-		}
-
-		return groups.merge(group);
+		return groupsBackend.updateGroup(group);
 	}
 
 	@POST
 	@Path("create")
 	@UnitOfWork
 	public Group create(Group group) {
-		return groups.persistOrMerge(group);
+		return groupsBackend.create(group);
 	}
 
 	@PUT
 	@Path("activate/{group_id}")
 	@UnitOfWork
 	public Response activate(@PathParam("group_id") long id) {
-		Group group = groups.findById(id);
 		try {
-			group.activate(antenna);
+			groupsBackend.activate(id);
 			return Response.status(Response.Status.NO_CONTENT).build();
 		}
 		catch (InterruptedException e) {
@@ -107,9 +75,8 @@ public class GroupsResource {
 	@Path("deactivate/{group_id}")
 	@UnitOfWork
 	public Response deactivate(@PathParam("group_id") long id) {
-		Group group = groups.findById(id);
 		try {
-			group.deactivate(antenna);
+			groupsBackend.deactivate(id);
 			return Response.status(Response.Status.NO_CONTENT).build();
 		}
 		catch (InterruptedException e) {
@@ -122,22 +89,12 @@ public class GroupsResource {
 	@Path("activate_all")
 	@UnitOfWork
 	public Response activateAll() {
-		boolean success = true;
-		Collection<Group> groups = this.groups.listAll();
-		for (Group group : groups) {
-			try {
-				group.activate(antenna);
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-				success = false;
-			}
-		}
-
-		if (success) {
+		try {
+			groupsBackend.activateAll();
 			return Response.status(Response.Status.NO_CONTENT).build();
 		}
-		else {
+		catch (InterruptedException e) {
+			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -146,22 +103,12 @@ public class GroupsResource {
 	@Path("deactivate_all")
 	@UnitOfWork
 	public Response deactivateAll() {
-		boolean success = true;
-		Collection<Group> groups = this.groups.listAll();
-		for (Group group : groups) {
-			try {
-				group.deactivate(antenna);
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-				success = false;
-			}
-		}
-
-		if (success) {
+		try {
+			groupsBackend.deactivateAll();
 			return Response.status(Response.Status.NO_CONTENT).build();
 		}
-		else {
+		catch (InterruptedException e) {
+			e.printStackTrace();
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

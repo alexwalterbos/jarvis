@@ -1,41 +1,28 @@
 package com.awalterbos.antenna;
 
+import static com.pi4j.wiringpi.Gpio.HIGH;
+import static com.pi4j.wiringpi.Gpio.LOW;
 import static com.pi4j.wiringpi.Gpio.digitalWrite;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import com.awalterbos.antenna.protocol.Protocol;
-import com.awalterbos.antenna.protocol.ProtocolOne;
-import com.awalterbos.antenna.protocol.ProtocolTwo;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.wiringpi.Gpio;
 
 public class Antenna {
 
 	private static final int REPEAT_SEND = 10;
 	private static final int CODEWORD_LENGTH = 24;
-	private Protocol protocol;
-	private Pin transmitterPin;
-	private boolean test;
+	private static final Pin transmitterPin = RaspiPin.GPIO_00; // TODO make settable?
+	private final boolean test;
 
 	public Antenna() {
-		init(1);
-	}
-
-	public Antenna(int protocol) {
-		init(protocol);
-	}
-
-	public void init(int protocol) {
-		setProtocol(protocol);
-
+		boolean test = false;
 		try {
-			transmitterPin = RaspiPin.GPIO_00;
 			GpioFactory.getDefaultProvider().export(transmitterPin, PinMode.DIGITAL_OUTPUT, PinState.LOW);
 		}
 		catch (NoClassDefFoundError | UnsatisfiedLinkError e) {
@@ -43,21 +30,14 @@ public class Antenna {
 			// Assume test mode
 			test = true;
 		}
+
+		this.test = test;
 	}
 
-	public void setProtocol(int prot) {
-		if (prot == 1) {
-			protocol = new ProtocolOne(this);
-		}
-		else if (prot == 2) {
-			protocol = new ProtocolTwo(this);
-		}
-	}
-
-	public void send(int code) throws InterruptedException {
+	public void send(Protocol protocol, int code) throws InterruptedException {
 		char[] binaryChars = dec2binWzerofill(code, CODEWORD_LENGTH);
 		System.out.println(String.format("Sending '%d' as '%s' ", code, String.valueOf(binaryChars)));
-		send(binaryChars);
+		send(protocol, binaryChars);
 	}
 
 	private char[] dec2binWzerofill(int code, int bitLength) {
@@ -83,36 +63,34 @@ public class Antenna {
 		return Arrays.copyOfRange(bin, 0, bitLength);
 	}
 
-	public void send(char[] codeWord) throws InterruptedException {
+	public void send(Protocol protocol, char[] codeWord) throws InterruptedException {
 		for (int i = 0; i < REPEAT_SEND; i++) {
 			for (char aCodeWord : codeWord) {
 				switch (aCodeWord) {
 					case '0':
-						protocol.send0();
+						transmit(protocol.get0());
 						break;
 					case '1':
-						protocol.send1();
+						transmit(protocol.get1());
 						break;
 				}
 			}
 
-			protocol.sendSync();
+			transmit(protocol.getSync());
 		}
 	}
 
-	public void transmit(int highPulseLength, int lowPulseLength) throws InterruptedException {
-		// TODO disable receive
-
+	private void transmit(Waveform waveform) throws InterruptedException {
 		if (test) {
 			return;
 		}
+		int current = waveform.isStartHigh() ? HIGH : LOW;
 
-		digitalWrite(transmitterPin.getAddress(), Gpio.HIGH);
-		delayMicro(highPulseLength);
-		digitalWrite(transmitterPin.getAddress(), Gpio.LOW);
-		delayMicro(lowPulseLength);
-
-		// TODO enable receive (in finally block)
+		for (int i = 0; i < waveform.getLengths().length; i++) {
+			digitalWrite(transmitterPin.getAddress(), current);
+			delayMicro(waveform.getLengths()[i]);
+			current = current == HIGH ? LOW : HIGH;
+		}
 	}
 
 	private void delayMicro(int durationInMicrosecs) {

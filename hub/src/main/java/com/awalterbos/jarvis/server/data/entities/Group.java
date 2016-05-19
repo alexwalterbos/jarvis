@@ -7,12 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.awalterbos.antenna.Antenna;
 import com.awalterbos.jarvis.server.interfaces.Radio;
-import com.awalterbos.jarvis.server.interfaces.Receiver;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -22,7 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @ToString(of = { "id", "name", "description" })
 @Table(name = "groups")
-public class Group implements EntityWithID, Receiver, Radio<Group> {
+public class Group implements EntityWithID, Radio<Group> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,11 +41,6 @@ public class Group implements EntityWithID, Receiver, Radio<Group> {
 	@Column(name = "signal_off")
 	private Integer signalOff;
 
-	public void activate(Antenna antenna) throws InterruptedException {
-		antenna.send(signalOn);
-	}
-
-	public void deactivate(Antenna antenna) throws InterruptedException {
-		antenna.send(signalOff);
-	}
+	@Column(name = "protocol")
+	private long protocol;
 }
