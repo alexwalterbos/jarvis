@@ -124,7 +124,7 @@
 			</column>
 			<column name="user_id" type="bigint"/>
 		</createTable>
-	</changeSet>
+	</changeSet>pp
 
 	<changeSet id="add_token_creation_timestamp_and_user_fk" author="awalterbos">
 		<addColumn tableName="tokens">
