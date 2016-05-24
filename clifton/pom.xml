@@ -37,7 +37,7 @@
 					<archive>
 						<manifest>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<mainClass>com.awalterbos.clifton.Clifton</mainClass>
+							<mainClass>com.awalterbos.jarvis.clifton.Clifton</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
