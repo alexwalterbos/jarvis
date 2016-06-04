@@ -126,4 +126,20 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="add_token_creation_timestamp_and_user_fk" author="awalterbos">
+		<addColumn tableName="tokens">
+			<column name="created" type="timestamp" defaultValue="now()">
+				<constraints nullable="false"/>
+			</column>
+		</addColumn>
+		<addNotNullConstraint tableName="tokens" columnName="user_id"/>
+		<addForeignKeyConstraint
+				baseTableName="tokens"
+				baseColumnNames="user_id"
+				referencedTableName="users"
+				referencedColumnNames="id"
+				constraintName="fk_token_has_user"
+				onDelete="CASCADE"/>
+	</changeSet>
+
 </databaseChangeLog>

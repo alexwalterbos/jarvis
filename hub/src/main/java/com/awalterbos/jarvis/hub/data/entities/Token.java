@@ -11,6 +11,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.joda.time.LocalDateTime;
 
 @Data
 @Accessors(chain = true)
@@ -25,6 +26,10 @@ public class Token {
 	@JsonIgnore
 	@OneToOne(targetEntity = User.class)
 	private User user;
+
+	@JsonIgnore
+	@Column(name = "created")
+	private LocalDateTime created;
 
 	public static Token fromUUID(UUID uuid, User user) {
 		return new Token()
