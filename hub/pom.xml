@@ -15,31 +15,37 @@
 		<dependency>
 			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-core</artifactId>
-			<version>0.8.0</version>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.hubspot.dropwizard</groupId>
 			<artifactId>dropwizard-guice</artifactId>
-			<version>0.8.0</version>
+			<version>0.8.4.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-migrations</artifactId>
-			<version>0.8.0</version>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-hibernate</artifactId>
-			<version>0.8.0</version>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-testing</artifactId>
-			<version>0.8.0</version>
+			<version>0.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-assets</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 
 		<dependency>
@@ -70,6 +76,12 @@
 			<groupId>com.awalterbos</groupId>
 			<artifactId>protocol</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.3m</version>
 		</dependency>
 	</dependencies>
 
@@ -105,7 +117,7 @@
 										implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
 								<transformer
 										implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.awalterbos.jarvis.server.JarvisApplication</mainClass>
+									<mainClass>com.awalterbos.jarvis.hub.JarvisApplication</mainClass>
 								</transformer>
 							</transformers>
 						</configuration>
