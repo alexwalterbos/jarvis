@@ -34,6 +34,7 @@ public class Token {
 	public static Token fromUUID(UUID uuid, User user) {
 		return new Token()
 				.setToken(uuid.toString())
-				.setUser(user);
+				.setUser(user)
+				.setCreated(LocalDateTime.now());
 	}
 }

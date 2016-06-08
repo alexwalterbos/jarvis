@@ -1,0 +1,23 @@
+{
+  "name": "jarvis-hub",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "build": "browserify -t babelify -t browserify-ngannotate src/app.js -o out/app.js",
+    "watch": "watchify -t babelify -t browserify-ngannotate src/app.js -o out/app.js",
+    "copy-to-target": "rsync -a . ../../../../target/classes/app --exclude node_modules --exclude src"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.3.0",
+    "browserify": "^13.0.1",
+    "browserify-ngannotate": "^2.0.0",
+    "watchify": "^3.6.1"
+  },
+  "dependencies": {
+    "angular": "^1.4.8",
+    "angular-sanitize": "^1.4.8",
+    "marked": "^0.3.5",
+    "ui-router": "^0.2.15"
+  }
+}

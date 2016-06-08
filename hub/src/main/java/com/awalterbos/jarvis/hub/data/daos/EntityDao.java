@@ -7,7 +7,7 @@ import javax.persistence.EntityNotFoundException;
 import java.io.Serializable;
 import java.util.Collection;
 
-import com.awalterbos.jarvis.hub.data.entities.EntityWithName;
+import com.awalterbos.jarvis.hub.data.entities.EntityWithId;
 import com.google.common.base.Preconditions;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Criteria;
@@ -51,7 +51,7 @@ public class EntityDao<T> extends AbstractDAO<T> {
 
 	public T merge(T t) {
 		currentSession().merge(t);
-		return findByIdOrThrow(((EntityWithName) t).getId());
+		return findByIdOrThrow(((EntityWithId) t).getId());
 	}
 
 	public T persistOrMerge(T t) {
@@ -61,7 +61,7 @@ public class EntityDao<T> extends AbstractDAO<T> {
 		else {
 			currentSession().persist(t);
 		}
-		return findByIdOrThrow(((EntityWithName) t).getId());
+		return findByIdOrThrow(((EntityWithId) t).getId());
 	}
 
 	public T persist(T t) {

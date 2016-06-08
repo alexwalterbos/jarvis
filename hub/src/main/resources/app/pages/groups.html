@@ -1,0 +1,25 @@
+<span class="pull-right" style="margin: 20px">
+	{{user.username}}
+
+	<button class="btn btn-default" ng-click="logout()">Logout</button>
+</span>
+<h1>Groups</h1>
+<div class="row">
+	<button class="pull-left btn btn-default" ng-click="activateAll()">Activate all</button>
+	<button class="pull-right btn btn-default" ng-click="deactivateAll()">Deactivate all</button>
+</div>
+<ul class="list-unstyled">
+	<li ng-repeat="group in groups">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				{{group.name}}
+			</div>
+			<div class="panel-body" ng-bind-html="group.description">
+			</div>
+			<div class="panel-footer">
+				<button class="btn btn-default" ng-click="activate(group)">Activate</button>
+				<button class="btn btn-default" ng-click="deactivate(group)">Deactivate</button>
+			</div>
+		</div>
+	</li>
+</ul>
