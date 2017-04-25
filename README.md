@@ -1,5 +1,7 @@
 DISCLAIMER: I do not intend to offer any support, or even sane versioning, unless I happen to feel like it. Always feel free to open an issue, but don't expect a quick response.
 
+LICENSE: See `LICENSE` file. MIT License, 2017, Alex Walterbos.
+
 ## Jarvis
 Jarvis is a custom home automation server, and currently serves as a host project for my ~~tinkering around~~ side projects.
 The goal is to create a central control point for the connected equipment via various ways of communication.

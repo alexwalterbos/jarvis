@@ -2,3 +2,4 @@ deploy
 deploy.sh
 node_modules
 out
+config.yml
