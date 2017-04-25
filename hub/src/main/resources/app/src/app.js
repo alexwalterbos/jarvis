@@ -1,6 +1,6 @@
 import angular from 'angular';
 import ngSanitize from 'angular-sanitize';
-import uiRouter from 'ui-router';
+import uiRouter from 'angular-ui-router';
 import groupsCtrl from './ctrls/groups'; // TODO CREATE THIS
 import loginCtrl from './ctrls/login'; // TODO CREATE THIS
 import tokenInterceptor from './interceptors/tokenInterceptor'

@@ -18,6 +18,6 @@
     "angular": "^1.4.8",
     "angular-sanitize": "^1.4.8",
     "marked": "^0.3.5",
-    "ui-router": "^0.2.15"
+    "angular-ui-router": "0.2.18"
   }
 }

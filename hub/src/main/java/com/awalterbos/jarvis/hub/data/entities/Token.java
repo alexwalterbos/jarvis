@@ -28,13 +28,12 @@ public class Token {
 	private User user;
 
 	@JsonIgnore
-	@Column(name = "created")
+	@Column(name = "created", insertable = false, updatable = false)
 	private LocalDateTime created;
 
 	public static Token fromUUID(UUID uuid, User user) {
 		return new Token()
 				.setToken(uuid.toString())
-				.setUser(user)
-				.setCreated(LocalDateTime.now());
+				.setUser(user);
 	}
 }

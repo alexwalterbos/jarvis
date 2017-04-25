@@ -8,6 +8,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import javax.persistence.EntityNotFoundException;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -15,11 +16,11 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.awalterbos.jarvis.antenna.Antenna;
 import com.awalterbos.jarvis.hub.JarvisModule;
 import com.awalterbos.jarvis.hub.backends.GroupsBackend;
 import com.awalterbos.jarvis.hub.backends.TokensBackend;
 import com.awalterbos.jarvis.hub.data.daos.Groups;
-import com.awalterbos.jarvis.hub.data.daos.Tokens;
 import com.awalterbos.jarvis.hub.data.entities.Group;
 import com.awalterbos.jarvis.hub.data.entities.Token;
 import com.awalterbos.jarvis.hub.data.entities.User;
@@ -35,11 +36,11 @@ import org.junit.Test;
 public class GroupsResourceTest {
 
 	private static final Groups GROUPS = mock(Groups.class);
-	private static final Tokens TOKENS = mock(Tokens.class);
+	private static final TokensBackend TOKENS_BACKEND = mock(TokensBackend.class);
 
 	@Rule
 	public final ResourceTestRule resources = ResourceTestRule.builder()
-			.addResource(new GroupsResource(mock(GroupsBackend.class), mock(TokensBackend.class)))
+			.addResource(new GroupsResource(new GroupsBackend(mock(Antenna.class), GROUPS), TOKENS_BACKEND))
 			.build();
 	private static final int SIGNAL_OFF = 12345;
 	private static final int SIGNAL_ON = 54321;
@@ -65,12 +66,14 @@ public class GroupsResourceTest {
 		Injector injector = Guice.createInjector(Modules.override(new JarvisModule()).with(new JarvisTestModule()));
 		group = injector.getInstance(Group.class);
 		group.setSignalOff(SIGNAL_OFF)
+				.setProtocol(1L)
 				.setSignalOn(SIGNAL_ON)
 				.setName("TestGroup")
 				.setDescription("Test");
 
 		doReturn(group).when(GROUPS).findByIdOrThrow(any(Long.class));
 		doReturn(group).when(GROUPS).merge(any(Group.class));
+		doReturn(group).when(GROUPS).persist(group);
 		doReturn(group.setId(incrementAndGetNewId())).when(GROUPS).persistOrMerge(any(Group.class));
 		ArrayList<Group> toBeReturned = new ArrayList<Group>();
 		toBeReturned.add(group);
@@ -78,8 +81,12 @@ public class GroupsResourceTest {
 		doThrow(new EntityNotFoundException()).when(GROUPS).findByIdOrThrow(eq(2L));
 		doThrow(new NullPointerException()).when(GROUPS).delete(eq(2L));
 
-		doReturn(adminToken).when(TOKENS).findByKeyOrThrow(eq(ADMIN_TOKEN));
-		doReturn(token).when(TOKENS).findByKeyOrThrow(eq(TEST_TOKEN));
+		doReturn(adminToken).when(TOKENS_BACKEND).findTokenOrThrow(eq(ADMIN_TOKEN), eq(true));
+		doReturn(token).when(TOKENS_BACKEND).findTokenOrThrow(eq(TEST_TOKEN), eq(false));
+		doThrow(new NotAuthorizedException("Token owner is not an admin")).when(TOKENS_BACKEND)
+				.findTokenOrThrow(eq(TEST_TOKEN), eq(true));
+		doThrow(new NotAuthorizedException("No authorization provided")).when(TOKENS_BACKEND)
+				.findTokenOrThrow(eq(((String) null)), any(Boolean.class));
 	}
 
 	private long incrementAndGetNewId() {
@@ -96,6 +103,7 @@ public class GroupsResourceTest {
 		Group result = resources.client()
 				.target("/groups/")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
 				.put(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 
@@ -104,6 +112,12 @@ public class GroupsResourceTest {
 				.request()
 				.get(Group.class);
 		assertThat(result).isEqualTo(group);
+
+		Response put = resources.client()
+				.target("/groups/")
+				.request()
+				.put(Entity.json(group));
+		assertThat(put.getStatusInfo()).isEqualTo(Response.Status.UNAUTHORIZED);
 	}
 
 	@Test
@@ -111,6 +125,7 @@ public class GroupsResourceTest {
 		Group result = resources.client()
 				.target("/groups/create/")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
 				.post(Entity.json(group), Group.class);
 		assertThat(result).isEqualTo(group);
 
@@ -150,7 +165,12 @@ public class GroupsResourceTest {
 				.header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
 				.delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
-		System.out.println(result);
+
+		result = resources.client()
+				.target("/groups/deactivate/1")
+				.request()
+				.delete();
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.UNAUTHORIZED);
 	}
 
 	@Test
@@ -161,7 +181,12 @@ public class GroupsResourceTest {
 				.header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
 				.delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
-		System.out.println(result);
+
+		result = resources.client()
+				.target("/groups/deactivate_all")
+				.request()
+				.delete();
+		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.UNAUTHORIZED);
 	}
 
 	@Test
@@ -181,6 +206,7 @@ public class GroupsResourceTest {
 		Group response = resources.client()
 				.target("/groups/create/")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
 				.post(Entity.json(group), Group.class);
 
 		assertThat(response).isEqualTo(group);
@@ -192,6 +218,7 @@ public class GroupsResourceTest {
 		Response response = resources.client()
 				.target("/groups")
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, ADMIN_TOKEN)
 				.put(Entity.json(group));
 
 		assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
@@ -200,13 +227,15 @@ public class GroupsResourceTest {
 	private void activate(Group group) {
 		Response result = resources.client().target("/groups/activate/" + group.getId())
 				.request()
-				.put(Entity.json(""));
+				.header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
+				.get();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 	}
 
 	private void deactivate(Group group) {
 		Response result = resources.client().target("/groups/deactivate/" + group.getId())
 				.request()
+				.header(HttpHeaders.AUTHORIZATION, TEST_TOKEN)
 				.delete();
 		assertThat(result.getStatusInfo()).isEqualTo(Response.Status.fromStatusCode(204));
 	}
