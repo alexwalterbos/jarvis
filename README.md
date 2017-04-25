@@ -1,19 +1,14 @@
-# Jarvis
-Jarvis is a custom home automation server, and currently serves as a host project for my improbable side projects of a completely feasible scale.
+DISCLAIMER: I do not intend to offer any support, or even sane versioning, unless I happen to feel like it. Always feel free to open an issue, but don't expect a quick response.
+
+## Jarvis
+Jarvis is a custom home automation server, and currently serves as a host project for my ~~tinkering around~~ side projects.
 The goal is to create a central control point for the connected equipment via various ways of communication.
 
-## Hub
-Hub is Jarvis' component responsible for processing requests by a client, for example to send a codeword.
-It consists of a [Dropwizard](http://www.dropwizard.io/) setup that provides: 
+### Hub
+Hub is Jarvis' central component. It is built with [Dropwizard](http://www.dropwizard.io/), and provides a RESTful(ish) api to communicate with. So far, it handles authentication/authorization and turning off lights in my house.
 
-* A RESTful API to handle HTTP requests
-* A database, handled via Hibernate
-* Injection of dropwizard components such as resources
-* A (currently underused) test suite
+### Antenna
+Antenna provides an interface to a GPIO header using [Pi4J](http://pi4j.com/). Via the GPIO header, it controlls a 433MHz transmitter. 
 
-## Antenna
-Antenna provides an interface to a GPIO header using [Pi4J](http://pi4j.com/). 
-Via the GPIO header, it controlls a 433MHz transmitter (receiver functionality will be added later).
-It allows to send 'codewords' through the antenna, aiming to reach 433MHz-enabled equipment throughout the environment, like remote-controllable lights.
-
-Antenna is designed to run on a Raspberry Pi, to which a transmitter is connected via the GPIO header.
+### Clifton
+A 'Command Line Interface For Turning lights ON'. If you know their codewords, that is.
